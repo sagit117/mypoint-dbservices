@@ -6,7 +6,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 @Suppress("unused")
-fun Application.controllers() {
+fun Application.controllersModule() {
     routing {
         route("/users") {
             get("/ping") {
