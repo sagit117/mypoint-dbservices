@@ -12,6 +12,10 @@ fun Application.controllersModule() {
             get("/ping") {
                 call.respond(HttpStatusCode.OK, "OK")
             }
+
+            post("/add") {
+
+            }
         }
     }
 }
