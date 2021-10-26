@@ -1,5 +1,6 @@
 package ru.mypoint.dbservices.domains.users
 
+import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -22,9 +23,7 @@ fun Application.controllersModule() {
             post("/add") {
                 val userDTO = call.receive<UserChangeDTO>()
 
-                println(userDTO.toString())
-
-                call.respond(HttpStatusCode.OK, userDTO.toString())
+                call.respond(HttpStatusCode.OK, Gson().toJson(userDTO))
             }
         }
     }
