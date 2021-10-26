@@ -11,20 +11,32 @@ import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 
 @Suppress("unused")
 fun Application.controllersModule() {
-    val userCollection = DataBase.getCollection<UserRepository>()
-    val userService = UserService(userCollection)
-
     routing {
         route("/users") {
+            val userCollection = DataBase.getCollection<UserRepository>()
+            val userService = UserService(userCollection)
+
             get("/ping") {
                 call.respond(HttpStatusCode.OK, "OK")
             }
 
             post("/add") {
                 val userDTO = call.receive<UserCreateDTO>()
-                val user = userDTO.copy()
+                val user = try {
+                    userDTO.copy()
+                } catch (error: Exception) {
+                    log.error(error.toString())
+                    null
+                }
 
-                call.respond(HttpStatusCode.OK, Gson().toJson(user))
+                if (user != null) {
+
+                    /** TODO блок работы с БД */
+
+                    call.respond(HttpStatusCode.OK, Gson().toJson(user))
+                } else {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
             }
         }
     }
