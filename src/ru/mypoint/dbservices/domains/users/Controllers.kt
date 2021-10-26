@@ -7,7 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import ru.mypoint.dbservices.connectors.DataBase
-import ru.mypoint.dbservices.domains.users.dto.UserChangeDTO
+import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 
 @Suppress("unused")
 fun Application.controllersModule() {
@@ -21,9 +21,10 @@ fun Application.controllersModule() {
             }
 
             post("/add") {
-                val userDTO = call.receive<UserChangeDTO>()
+                val userDTO = call.receive<UserCreateDTO>()
+                val user = userDTO.copy()
 
-                call.respond(HttpStatusCode.OK, Gson().toJson(userDTO))
+                call.respond(HttpStatusCode.OK, Gson().toJson(user))
             }
         }
     }
