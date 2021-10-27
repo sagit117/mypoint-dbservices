@@ -1,6 +1,7 @@
 package ru.mypoint.dbservices.domains.users
 
 import com.google.gson.Gson
+import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
 import io.ktor.application.*
 import io.ktor.http.*
@@ -38,23 +39,29 @@ fun Application.controllersModule() {
                 }
 
                 if (user != null) {
-                    /** TODO блок работы с БД */
+                    /** блок работы с БД */
                     val wasAcknowledged: Boolean = try {
                         userService.insertOne(user).wasAcknowledged()
-                    } catch (error: Exception) {
-                        // todo: сделать обработку ошибок
-                        log.error(error.toString())
+                    } catch (error: Throwable) {
+                        when(error) {
+                            is MongoWriteException ->
+                                return@post call.respond(HttpStatusCode.Conflict, Gson().toJson(ResponseDTO(ResponseStatus.Conflict.value)))
+
+                            else -> log.error(error.message)
+                        }
+
                         false
                     }
 
                     if (wasAcknowledged) {
                         call.respond(HttpStatusCode.OK, Gson().toJson(ResponseDTO(ResponseStatus.OK.value)))
                     } else {
-                        call.respond(HttpStatusCode.Conflict)
+                        // любая не обработанная ошибка
+                        call.respond(HttpStatusCode.InternalServerError)
                     }
                 } else {
-                    println(ResponseStatus.NoValidate.value)
-                    call.respond(HttpStatusCode.BadRequest, Gson().toJson(ResponseDTO(ResponseStatus.NoValidate.value))) // входные данные не верны
+                    // входные данные не верны
+                    call.respond(HttpStatusCode.BadRequest, Gson().toJson(ResponseDTO(ResponseStatus.NoValidate.value)))
                 }
             }
         }
