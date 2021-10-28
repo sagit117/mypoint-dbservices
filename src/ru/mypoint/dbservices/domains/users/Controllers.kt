@@ -1,6 +1,5 @@
 package ru.mypoint.dbservices.domains.users
 
-import com.google.gson.Gson
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
 import io.ktor.application.*
@@ -8,10 +7,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.litote.kmongo.eq
 import ru.mypoint.dbservices.connectors.DataBase
-import ru.mypoint.dbservices.domains.dto.ResponseDTO
-import ru.mypoint.dbservices.domains.dto.ResponseStatus
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 
 @Suppress("unused")
@@ -44,8 +40,7 @@ fun Application.controllersModule() {
                         userService.insertOne(user).wasAcknowledged()
                     } catch (error: Throwable) {
                         when(error) {
-                            is MongoWriteException ->
-                                return@post call.respond(HttpStatusCode.Conflict, Gson().toJson(ResponseDTO(ResponseStatus.Conflict.value)))
+                            is MongoWriteException -> return@post call.respond(HttpStatusCode.Conflict)
 
                             else -> log.error(error.message)
                         }
@@ -54,14 +49,14 @@ fun Application.controllersModule() {
                     }
 
                     if (wasAcknowledged) {
-                        call.respond(HttpStatusCode.OK, Gson().toJson(ResponseDTO(ResponseStatus.OK.value)))
+                        call.respond(HttpStatusCode.OK)
                     } else {
                         // любая не обработанная ошибка
                         call.respond(HttpStatusCode.InternalServerError)
                     }
                 } else {
                     // входные данные не верны
-                    call.respond(HttpStatusCode.BadRequest, Gson().toJson(ResponseDTO(ResponseStatus.NoValidate.value)))
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }
