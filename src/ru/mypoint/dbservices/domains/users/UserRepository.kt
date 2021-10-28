@@ -19,4 +19,5 @@ data class UserRepository(
     val isNeedsPassword: Boolean = false,
     val isConfirmEmail: Boolean = false,
     val dateTimeAtCreation: Long = System.currentTimeMillis(),
+    val roles: MutableList<String> = mutableListOf("UserRole")
 )
