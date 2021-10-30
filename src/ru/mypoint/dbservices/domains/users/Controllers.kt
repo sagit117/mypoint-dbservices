@@ -73,8 +73,6 @@ fun Application.controllersModule() {
                     return@post call.respond(HttpStatusCode.InternalServerError)
                 }
 
-                println(userDTO.toString())
-
                 if (userRepository != null && !userRepository.isBlocked && userRepository.password == userDTO.password.sha256()) {
                     // TODO: снять блок
 
