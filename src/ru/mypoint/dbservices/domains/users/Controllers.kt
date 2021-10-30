@@ -1,5 +1,6 @@
 package ru.mypoint.dbservices.domains.users
 
+import com.google.gson.Gson
 import com.mongodb.MongoWriteException
 import com.mongodb.client.model.IndexOptions
 import io.ktor.application.*
@@ -9,6 +10,8 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
+import ru.mypoint.dbservices.domains.users.dto.UserLoginDTO
+import ru.mypoint.dbservices.utils.sha256
 
 @Suppress("unused")
 fun Application.controllersModule() {
@@ -57,6 +60,27 @@ fun Application.controllersModule() {
                 } else {
                     // входные данные не верны
                     call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            post("/login") {
+                val userDTO = call.receive<UserLoginDTO>()
+
+                val userRepository = try {
+                    userService.findOneByEmail(userDTO.email)
+                } catch (error: Throwable) {
+                    log.error(error.message)
+                    return@post call.respond(HttpStatusCode.InternalServerError)
+                }
+
+                println(userDTO.toString())
+
+                if (userRepository != null && !userRepository.isBlocked && userRepository.password == userDTO.password.sha256()) {
+                    // TODO: снять блок
+
+                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized)
                 }
             }
         }

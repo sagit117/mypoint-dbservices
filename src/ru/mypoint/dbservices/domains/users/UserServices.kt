@@ -4,6 +4,7 @@ import com.mongodb.client.result.InsertOneResult
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
+import ru.mypoint.dbservices.domains.users.dto.UserLoginDTO
 import ru.mypoint.dbservices.utils.sha256
 
 /**
