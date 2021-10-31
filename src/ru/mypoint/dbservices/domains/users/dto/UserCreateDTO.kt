@@ -2,6 +2,9 @@ package ru.mypoint.dbservices.domains.users.dto
 
 import java.util.regex.Pattern
 
+/**
+ * DTO для создания(регистрации) пользователя
+ */
 data class UserCreateDTO(
     var email: String,
     val password: String,
@@ -13,6 +16,7 @@ data class UserCreateDTO(
     val isConfirmEmail: Boolean? = false
 ) {
     init {
+        /** валидация email */
         if (!isCorrectEmail()) {
             throw IllegalArgumentException("Email required")
         }

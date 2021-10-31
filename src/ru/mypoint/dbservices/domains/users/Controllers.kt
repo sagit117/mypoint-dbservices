@@ -10,6 +10,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
+import ru.mypoint.dbservices.domains.users.dto.UserGetDTO
 import ru.mypoint.dbservices.domains.users.dto.UserLoginDTO
 import ru.mypoint.dbservices.utils.sha256
 
@@ -59,6 +60,18 @@ fun Application.controllersModule() {
                     }
                 } else {
                     // входные данные не верны
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            post("/get") {
+                val userGetDTO = call.receive<UserGetDTO>()
+
+                val userRepository = userService.findOneByEmail(userGetDTO.email)
+
+                if (userRepository != null) {
+                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
+                } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
             }
