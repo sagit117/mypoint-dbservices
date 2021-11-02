@@ -26,9 +26,6 @@ fun Application.controllersModule() {
             }
 
             post("/add") {
-                // todo: подумать куда перенести
-                userCollection.createIndex("{'email':1}", IndexOptions().unique(true))
-
                 val userDTO = call.receive<UserCreateDTO>()
                 val user = try {
                     userDTO.copy()
@@ -86,10 +83,19 @@ fun Application.controllersModule() {
                 }
 
                 if (userRepository != null && !userRepository.isBlocked && userRepository.password == userDTO.password.sha256()) {
-                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
+                    // снять блок
+                    val hash = if (userRepository.isNeedsPassword) {
+                        userService.needsPasswordComplete(userRepository.email)
+                    } else {
+                        null
+                    }
 
-                    // TODO: снять блок
-
+                    call.respond(
+                        HttpStatusCode.OK,
+                        Gson().toJson(
+                            userRepository.copy(password = "", hashCode = hash ?: userRepository.hashCode)
+                        )
+                    )
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
                 }

@@ -3,6 +3,7 @@ package ru.mypoint.dbservices.domains.users
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.Id
 import org.litote.kmongo.newId
+import ru.mypoint.dbservices.utils.randomCode
 
 /**
  * Класс для хранилища пользователей
@@ -19,5 +20,6 @@ data class UserRepository(
     val isNeedsPassword: Boolean = false,
     val isConfirmEmail: Boolean = false,
     val dateTimeAtCreation: Long = System.currentTimeMillis(),
-    val roles: MutableList<String> = mutableListOf()
+    val roles: MutableList<String> = mutableListOf(),
+    val hashCode: String = randomCode(10)
 )
