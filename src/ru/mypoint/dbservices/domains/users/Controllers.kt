@@ -19,11 +19,10 @@ fun Application.controllersModule() {
     routing {
         route("/users") {
             val userCollection = DataBase.getCollection<UserRepository>()
-
             val userService = UserService(userCollection)
 
             get("/ping") {
-                call.respond(HttpStatusCode.OK, "OK")
+                call.respond(HttpStatusCode.OK, mapOf("status" to "OK"))
             }
 
             post("/add") {
@@ -87,9 +86,10 @@ fun Application.controllersModule() {
                 }
 
                 if (userRepository != null && !userRepository.isBlocked && userRepository.password == userDTO.password.sha256()) {
+                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
+
                     // TODO: снять блок
 
-                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
                 }
