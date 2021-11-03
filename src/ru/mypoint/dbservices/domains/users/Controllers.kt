@@ -1,13 +1,12 @@
 package ru.mypoint.dbservices.domains.users
 
-import com.google.gson.Gson
 import com.mongodb.MongoWriteException
-import com.mongodb.client.model.IndexOptions
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.litote.kmongo.json
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
@@ -67,7 +66,7 @@ fun Application.controllersModule() {
                 val userRepository = userService.findOneByEmail(userGetDTO.email)
 
                 if (userRepository != null) {
-                    call.respond(HttpStatusCode.OK, Gson().toJson(userRepository.copy(password = "")))
+                    call.respond(HttpStatusCode.OK, userRepository.copy(password = "").json)
                 } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -93,9 +92,7 @@ fun Application.controllersModule() {
 
                     call.respond(
                         HttpStatusCode.OK,
-                        Gson().toJson(
-                            userRepository.copy(password = "", hashCode = hash ?: userRepository.hashCode)
-                        )
+                        userRepository.copy(password = "", hashCode = hash ?: userRepository.hashCode).json
                     )
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
