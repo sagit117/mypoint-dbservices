@@ -9,6 +9,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import ru.mypoint.dbservices.connectors.DataBase
+import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 import ru.mypoint.dbservices.domains.users.dto.UserGetDTO
 import ru.mypoint.dbservices.domains.users.dto.UserLoginDTO
@@ -98,6 +99,16 @@ fun Application.controllersModule() {
                     )
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
+                }
+            }
+
+            post("/update/data") {
+                val userChangeDataDTO = call.receive<UserChangeDataDTO>()
+
+                if (userService.updateOneByEmail(userChangeDataDTO).wasAcknowledged()) {
+                    call.respond(HttpStatusCode.OK)
+                } else {
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }

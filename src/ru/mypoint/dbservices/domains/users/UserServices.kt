@@ -1,16 +1,16 @@
 package ru.mypoint.dbservices.domains.users
 
 import com.mongodb.client.model.IndexOptions
+import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.result.InsertOneResult
 import com.mongodb.client.result.UpdateResult
-import org.litote.kmongo.SetTo
+import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.eq
-import org.litote.kmongo.set
-import org.litote.kmongo.setValue
+import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 import ru.mypoint.dbservices.utils.randomCode
 import ru.mypoint.dbservices.utils.sha256
+import kotlin.reflect.full.memberProperties
 
 /**
  * Сервис для работы с репозиторием user
@@ -30,6 +30,20 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
             zipCode = userCreateDTO.zipCode ?: 0,
             fullName = userCreateDTO.fullName ?: "",
         ))
+    }
+
+    suspend fun updateOneByEmail(userChangeDataDTO: UserChangeDataDTO): UpdateResult {
+        val setProps = mutableSetOf<SetTo<Any>>()
+        if (userChangeDataDTO.address != null) setProps.add(SetTo(UserRepository::address, userChangeDataDTO.address))
+        if (userChangeDataDTO.zipCode != null) setProps.add(SetTo(UserRepository::zipCode, userChangeDataDTO.zipCode))
+        if (userChangeDataDTO.fullName != null) setProps.add(SetTo(UserRepository::fullName, userChangeDataDTO.fullName))
+
+        return collection.updateOne(
+            UserRepository::email eq userChangeDataDTO.email,
+            set(
+                *setProps.toTypedArray()
+            )
+        )
     }
 
     suspend fun needsPasswordComplete(email: String): String? {
