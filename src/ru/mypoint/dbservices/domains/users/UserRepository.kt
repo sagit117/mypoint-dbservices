@@ -21,5 +21,5 @@ data class UserRepository(
     val isConfirmEmail: Boolean = false,
     val dateTimeAtCreation: Long = System.currentTimeMillis(),
     val roles: MutableList<String> = mutableListOf(),
-    val hashCode: String = randomCode(10)
+    val hashCode: String = randomCode(10) // хэш код используется для верификации токена
 )

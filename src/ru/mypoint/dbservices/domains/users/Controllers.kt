@@ -27,6 +27,7 @@ fun Application.controllersModule() {
 
             post("/add") {
                 val userDTO = call.receive<UserCreateDTO>()
+
                 val user = try {
                     userDTO.copy()
                 } catch (error: Exception) {

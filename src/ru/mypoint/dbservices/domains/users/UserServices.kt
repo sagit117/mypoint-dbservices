@@ -1,7 +1,6 @@
 package ru.mypoint.dbservices.domains.users
 
 import com.mongodb.client.model.IndexOptions
-import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.result.InsertOneResult
 import com.mongodb.client.result.UpdateResult
 import org.litote.kmongo.*
@@ -10,7 +9,6 @@ import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 import ru.mypoint.dbservices.utils.randomCode
 import ru.mypoint.dbservices.utils.sha256
-import kotlin.reflect.full.memberProperties
 
 /**
  * Сервис для работы с репозиторием user
@@ -32,6 +30,7 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
         ))
     }
 
+    /** Метод обновляет не основные данные пользователя */
     suspend fun updateOneByEmail(userChangeDataDTO: UserChangeDataDTO): UpdateResult {
         val setProps = mutableSetOf<SetTo<Any>>()
         if (userChangeDataDTO.address != null) setProps.add(SetTo(UserRepository::address, userChangeDataDTO.address))
@@ -46,6 +45,7 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
         )
     }
 
+    /** Метод снимает блокировку требующую ввод пароля */
     suspend fun needsPasswordComplete(email: String): String? {
         val hash = randomCode(10)
 
@@ -53,7 +53,7 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
             UserRepository::email eq email,
             set(
                 SetTo(UserRepository::isNeedsPassword, false),
-                SetTo(UserRepository::hashCode, hash)
+                SetTo(UserRepository::hashCode, hash) // обновляем хэш код, что-бы текущие токены стали не действительными
             )
         ).wasAcknowledged()) {
              hash
