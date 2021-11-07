@@ -21,10 +21,6 @@ fun Application.controllersModule() {
             val userCollection = DataBase.getCollection<UserRepository>()
             val userService = UserService(userCollection)
 
-            get("/ping") {
-                call.respond(HttpStatusCode.OK, mapOf("status" to "OK"))
-            }
-
             post("/add") {
                 val userDTO = call.receive<UserCreateDTO>()
 
