@@ -17,7 +17,7 @@ import ru.mypoint.dbservices.utils.sha256
 @Suppress("unused")
 fun Application.controllersModule() {
     routing {
-        route("/users") {
+        route("/v1/users") {
             val userCollection = DataBase.getCollection<UserRepository>()
             val userService = UserService(userCollection)
 
