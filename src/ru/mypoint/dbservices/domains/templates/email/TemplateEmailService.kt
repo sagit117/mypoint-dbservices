@@ -12,7 +12,9 @@ class TemplateEmailService(private val collection: CoroutineCollection<TemplateE
 
         return collection.insertOne(TemplateEmailRepository(
             name = templateEmailCreateDTO.name,
-            template = templateEmailCreateDTO.template
+            template = templateEmailCreateDTO.template,
+            subject = templateEmailCreateDTO.subject,
+            altMsgText = templateEmailCreateDTO.altMsgText
         ))
     }
 
