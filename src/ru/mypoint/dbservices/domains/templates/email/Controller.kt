@@ -6,8 +6,10 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.litote.kmongo.json
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.templates.email.dto.TemplateEmailCreateDTO
+import ru.mypoint.dbservices.domains.templates.email.dto.TemplateEmailGetDTO
 
 @Suppress("unused")
 fun Application.controllerTemplatesEmailModule() {
@@ -48,6 +50,18 @@ fun Application.controllerTemplatesEmailModule() {
                     }
                 } else {
                     // входные данные не верны
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            post("get") {
+                val templateEmailGetDTO = call.receive<TemplateEmailGetDTO>()
+
+                val templateEmailRepository = templateEmailService.findOneByName(templateEmailGetDTO.name)
+
+                if (templateEmailRepository != null) {
+                    call.respond(HttpStatusCode.OK, templateEmailRepository.json)
+                } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
             }
