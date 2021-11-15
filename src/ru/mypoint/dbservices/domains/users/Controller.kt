@@ -22,38 +22,31 @@ fun Application.controllerUsersModule() {
             val userService = UserService(userCollection)
 
             post("/add") {
-                val userDTO = call.receive<UserCreateDTO>()
-
                 val user = try {
-                    userDTO.copy()
-                } catch (error: Exception) {
+                    call.receive<UserCreateDTO>().copy()
+                } catch (error: Exception) { // входные данные не верны
                     log.error(error.toString())
-                    null
+                    return@post call.respond(HttpStatusCode.BadRequest)
                 }
 
-                if (user != null) {
-                    /** блок работы с БД */
-                    val wasAcknowledged: Boolean = try {
-                        userService.insertOne(user).wasAcknowledged()
-                    } catch (error: Throwable) {
-                        when(error) {
-                            is MongoWriteException -> return@post call.respond(HttpStatusCode.Conflict)
+                /** блок работы с БД */
+                val wasAcknowledged: Boolean = try {
+                    userService.insertOne(user).wasAcknowledged()
+                } catch (error: Throwable) {
+                    when(error) {
+                        is MongoWriteException -> return@post call.respond(HttpStatusCode.Conflict)
 
-                            else -> log.error(error.message)
-                        }
-
-                        false
+                        else -> log.error(error.message)
                     }
 
-                    if (wasAcknowledged) {
-                        call.respond(HttpStatusCode.OK)
-                    } else {
-                        // любая не обработанная ошибка
-                        call.respond(HttpStatusCode.InternalServerError)
-                    }
+                    false
+                }
+
+                if (wasAcknowledged) {
+                    call.respond(HttpStatusCode.OK)
                 } else {
-                    // входные данные не верны
-                    call.respond(HttpStatusCode.BadRequest)
+                    // любая не обработанная ошибка
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
             }
 

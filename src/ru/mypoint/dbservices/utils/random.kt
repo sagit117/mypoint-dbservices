@@ -1,5 +1,6 @@
 package ru.mypoint.dbservices.utils
 
+/** генератор хэш-кода */
 fun randomCode(length: Int): String {
     val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 

@@ -19,38 +19,31 @@ fun Application.controllerTemplatesEmailModule() {
             val templateEmailService = TemplateEmailService(templateEmailCollection)
 
             post("add") {
-                val templateEmailCreateDTO = call.receive<TemplateEmailCreateDTO>()
-
                 val template = try {
-                    templateEmailCreateDTO.copy()
-                } catch (error: Exception) {
+                    call.receive<TemplateEmailCreateDTO>().copy()
+                } catch (error: Exception) { // входные данные не верны
                     log.error(error.toString())
-                    null
+                    return@post call.respond(HttpStatusCode.BadRequest)
                 }
 
-                if (template != null) {
-                    /** блок работы с БД */
-                    val wasAcknowledged: Boolean = try {
-                        templateEmailService.insertOne(template).wasAcknowledged()
-                    } catch (error: Throwable) {
-                        when(error) {
-                            is MongoWriteException -> return@post call.respond(HttpStatusCode.Conflict)
+                /** блок работы с БД */
+                val wasAcknowledged: Boolean = try {
+                    templateEmailService.insertOne(template).wasAcknowledged()
+                } catch (error: Throwable) {
+                    when(error) {
+                        is MongoWriteException -> return@post call.respond(HttpStatusCode.Conflict)
 
-                            else -> log.error(error.message)
-                        }
-
-                        false
+                        else -> log.error(error.message)
                     }
 
-                    if (wasAcknowledged) {
-                        call.respond(HttpStatusCode.OK)
-                    } else {
-                        // любая не обработанная ошибка
-                        call.respond(HttpStatusCode.InternalServerError)
-                    }
+                    false
+                }
+
+                if (wasAcknowledged) {
+                    call.respond(HttpStatusCode.OK)
                 } else {
-                    // входные данные не верны
-                    call.respond(HttpStatusCode.BadRequest)
+                    // любая не обработанная ошибка
+                    call.respond(HttpStatusCode.InternalServerError)
                 }
             }
 
