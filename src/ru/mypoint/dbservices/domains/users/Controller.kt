@@ -8,10 +8,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.litote.kmongo.json
 import ru.mypoint.dbservices.connectors.DataBase
-import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
-import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
-import ru.mypoint.dbservices.domains.users.dto.UserGetDTO
-import ru.mypoint.dbservices.domains.users.dto.UserLoginDTO
+import ru.mypoint.dbservices.domains.users.dto.*
 import ru.mypoint.dbservices.utils.sha256
 
 @Suppress("unused")
@@ -93,6 +90,16 @@ fun Application.controllerUsersModule() {
                 val userChangeDataDTO = call.receive<UserChangeDataDTO>()
 
                 if (userService.updateOneByEmail(userChangeDataDTO).wasAcknowledged()) {
+                    call.respond(HttpStatusCode.OK)
+                } else {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
+            }
+
+            post("/confirmation/email") {
+                val confirmationEmailDTO = call.receive<ConfirmationEmailDTO>()
+
+                if (userService.confirmationEmail(confirmationEmailDTO.email).wasAcknowledged()) {
                     call.respond(HttpStatusCode.OK)
                 } else {
                     call.respond(HttpStatusCode.BadRequest)

@@ -61,4 +61,8 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
             null
         }
     }
+
+    suspend fun confirmationEmail(email: String): UpdateResult {
+        return collection.updateOne(UserRepository::email eq email, setValue(UserRepository::isConfirmEmail, true))
+    }
 }
