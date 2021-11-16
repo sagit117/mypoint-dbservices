@@ -86,15 +86,28 @@ fun Application.controllerUsersModule() {
                 }
             }
 
-            post("/update/data") {
-                val userChangeDataDTO = call.receive<UserChangeDataDTO>()
+            route("/update") {
+                post("/data") {
+                    val userChangeDataDTO = call.receive<UserChangeDataDTO>()
 
-                if (userService.updateOneByEmail(userChangeDataDTO).wasAcknowledged()) {
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.BadRequest)
+                    if (userService.updateOneByEmail(userChangeDataDTO).wasAcknowledged()) {
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
+                }
+
+                post("/password") {
+                    val userChangePasswordDTO = call.receive<UserChangePasswordDTO>()
+
+                    if (userService.changePassword(userChangePasswordDTO).wasAcknowledged()) {
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
             }
+
 
             post("/confirmation/email") {
                 val confirmationEmailDTO = call.receive<ConfirmationEmailDTO>()

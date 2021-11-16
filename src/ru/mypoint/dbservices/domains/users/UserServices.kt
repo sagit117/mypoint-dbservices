@@ -6,6 +6,7 @@ import com.mongodb.client.result.UpdateResult
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineCollection
 import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
+import ru.mypoint.dbservices.domains.users.dto.UserChangePasswordDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
 import ru.mypoint.dbservices.utils.randomCode
 import ru.mypoint.dbservices.utils.sha256
@@ -62,7 +63,17 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
         }
     }
 
+    /** подтверждение email */
     suspend fun confirmationEmail(email: String): UpdateResult {
         return collection.updateOne(UserRepository::email eq email, setValue(UserRepository::isConfirmEmail, true))
+    }
+
+    /** смена пароля */
+    suspend fun changePassword(changePasswordDTO: UserChangePasswordDTO): UpdateResult {
+        return collection
+            .updateOne(
+                UserRepository::email eq changePasswordDTO.email,
+                setValue(UserRepository::password, changePasswordDTO.newPassword.sha256())
+            )
     }
 }
