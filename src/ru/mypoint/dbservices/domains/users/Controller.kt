@@ -108,7 +108,6 @@ fun Application.controllerUsersModule() {
                 }
             }
 
-
             post("/confirmation/email") {
                 val confirmationEmailDTO = call.receive<ConfirmationEmailDTO>()
 
