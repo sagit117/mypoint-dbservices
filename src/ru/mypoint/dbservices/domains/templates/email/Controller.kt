@@ -6,7 +6,6 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.litote.kmongo.json
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.templates.email.dto.TemplateEmailCreateDTO
 import ru.mypoint.dbservices.domains.templates.email.dto.TemplateEmailGetDTO
