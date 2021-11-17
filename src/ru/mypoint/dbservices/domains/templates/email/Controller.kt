@@ -53,7 +53,7 @@ fun Application.controllerTemplatesEmailModule() {
                 val templateEmailRepository = templateEmailService.findOneByName(templateEmailGetDTO.name)
 
                 if (templateEmailRepository != null) {
-                    call.respond(HttpStatusCode.OK, templateEmailRepository.json)
+                    call.respond(HttpStatusCode.OK, templateEmailRepository)
                 } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }

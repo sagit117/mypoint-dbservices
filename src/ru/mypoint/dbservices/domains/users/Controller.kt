@@ -6,7 +6,6 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.litote.kmongo.json
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.*
 import ru.mypoint.dbservices.utils.sha256
@@ -53,7 +52,7 @@ fun Application.controllerUsersModule() {
                 val userRepository = userService.findOneByEmail(userGetDTO.email)
 
                 if (userRepository != null) {
-                    call.respond(HttpStatusCode.OK, userRepository.copy(password = "").json)
+                    call.respond(HttpStatusCode.OK, userRepository.copy(password = ""))
                 } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
@@ -79,7 +78,7 @@ fun Application.controllerUsersModule() {
 
                     call.respond(
                         HttpStatusCode.OK,
-                        userRepository.copy(password = "", hashCode = hash ?: userRepository.hashCode).json
+                        userRepository.copy(password = "", hashCode = hash ?: userRepository.hashCode)
                     )
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
