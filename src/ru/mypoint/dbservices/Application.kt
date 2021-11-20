@@ -3,7 +3,6 @@ package ru.mypoint.dbservices
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.features.*
-import org.slf4j.event.*
 import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -15,7 +14,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     install(CallLogging) {
-        level = Level.INFO
+        // TODO: убрать лишние логи (БД)
         filter { call -> call.request.path().startsWith("/") }
     }
 
