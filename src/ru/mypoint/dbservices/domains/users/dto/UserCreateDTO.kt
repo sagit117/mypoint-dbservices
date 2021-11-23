@@ -17,14 +17,14 @@ data class UserCreateDTO(
 ) {
     init {
         /** валидация email */
+        email = email.trim().lowercase()
+
         if (!isCorrectEmail()) {
             throw IllegalArgumentException("Email required")
         }
-
-        email = email.trim().lowercase()
     }
 
-    fun isCorrectEmail(): Boolean {
+    private fun isCorrectEmail(): Boolean {
         val emailPattern = Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
                     "\\@" +
@@ -35,6 +35,6 @@ data class UserCreateDTO(
                     ")+"
         )
 
-        return emailPattern.matcher(email.trim().lowercase()).matches()
+        return emailPattern.matcher(email).matches()
     }
 }

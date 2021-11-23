@@ -19,6 +19,7 @@ fun Application.controllerUsersModule() {
 
             post("/add") {
                 val user = try {
+                    /** инициируем класс для валидации email */
                     call.receive<UserCreateDTO>().copy()
                 } catch (error: Exception) { // входные данные не верны
                     log.error(error.toString())
