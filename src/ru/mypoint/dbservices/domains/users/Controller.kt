@@ -19,14 +19,14 @@ fun Application.controllerUsersModule() {
 
             post("/add") {
                 val user = try {
-                    /** инициируем класс для валидации email */
+                    /** Инициируем класс для валидации email */
                     call.receive<UserCreateDTO>().copy()
                 } catch (error: Exception) { // входные данные не верны
                     log.error(error.toString())
                     return@post call.respond(HttpStatusCode.BadRequest)
                 }
 
-                /** блок работы с БД */
+                /** Блок работы с БД */
                 val wasAcknowledged: Boolean = try {
                     userService.insertOne(user).wasAcknowledged()
                 } catch (error: Throwable) {
