@@ -47,26 +47,28 @@ fun Application.controllerUsersModule() {
                 }
             }
 
-            /** Получить одного пользователя */
-            post("/get") {
-                val userGetDTO = call.receive<UserGetDTO>()
+            route("/get") {
+                /** Получить одного пользователя */
+                post("/one") {
+                    val userGetDTO = call.receive<UserGetDTO>()
 
-                val userRepository = userService.findOneByEmail(userGetDTO.email)
+                    val userRepository = userService.findOneByEmail(userGetDTO.email)
 
-                if (userRepository != null) {
-                    call.respond(HttpStatusCode.OK, userRepository.copy(password = ""))
-                } else {
-                    call.respond(HttpStatusCode.BadRequest)
+                    if (userRepository != null) {
+                        call.respond(HttpStatusCode.OK, userRepository.copy(password = ""))
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
                 }
-            }
 
-            /** Получить несколько пользователей */
-            post("/get/all") {
-                val userGetDTO = call.receive<UsersGetDTO>()
+                /** Получить несколько пользователей */
+                post("/all") {
+                    val userGetDTO = call.receive<UsersGetDTO>()
 
-                val userRepositoryList = userService.findAll(userGetDTO)
+                    val userRepositoryList = userService.findAll(userGetDTO)
 
-                call.respond(HttpStatusCode.OK, userRepositoryList)
+                    call.respond(HttpStatusCode.OK, userRepositoryList)
+                }
             }
 
             post("/login") {
