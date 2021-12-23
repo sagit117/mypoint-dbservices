@@ -5,9 +5,11 @@ import com.mongodb.client.result.InsertOneResult
 import com.mongodb.client.result.UpdateResult
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineCollection
+import org.litote.kmongo.coroutine.CoroutineFindPublisher
 import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
 import ru.mypoint.dbservices.domains.users.dto.UserChangePasswordDTO
 import ru.mypoint.dbservices.domains.users.dto.UserCreateDTO
+import ru.mypoint.dbservices.domains.users.dto.UsersGetDTO
 import ru.mypoint.dbservices.utils.randomCode
 import ru.mypoint.dbservices.utils.sha256
 
@@ -75,5 +77,15 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
                 UserRepository::email eq changePasswordDTO.email,
                 setValue(UserRepository::password, changePasswordDTO.newPassword.sha256())
             )
+    }
+
+    /** Получить всех пользователей */
+    suspend fun findAll(usersGetDTO: UsersGetDTO): List<UserRepository> {
+        return collection
+            .find()
+            .limit(usersGetDTO.limit)
+            .skip(usersGetDTO.skip)
+            .projection(fields(exclude(UserRepository::password)))
+            .toList()
     }
 }

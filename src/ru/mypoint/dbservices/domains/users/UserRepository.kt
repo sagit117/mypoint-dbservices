@@ -12,7 +12,7 @@ data class UserRepository(
     @BsonId
     val id: Id<UserRepository> = newId(),
     val email: String,
-    val password: String,
+    val password: String?,
     val fullName: String = "",
     val zipCode: Int = 0,
     val address: String = "",

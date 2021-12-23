@@ -47,6 +47,7 @@ fun Application.controllerUsersModule() {
                 }
             }
 
+            /** Получить одного пользователя */
             post("/get") {
                 val userGetDTO = call.receive<UserGetDTO>()
 
@@ -57,6 +58,15 @@ fun Application.controllerUsersModule() {
                 } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
+            }
+
+            /** Получить несколько пользователей */
+            post("/get/all") {
+                val userGetDTO = call.receive<UsersGetDTO>()
+
+                val userRepositoryList = userService.findAll(userGetDTO)
+
+                call.respond(HttpStatusCode.OK, userRepositoryList)
             }
 
             post("/login") {
