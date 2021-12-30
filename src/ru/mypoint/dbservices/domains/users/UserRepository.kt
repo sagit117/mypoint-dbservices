@@ -10,7 +10,7 @@ import ru.mypoint.dbservices.utils.randomCode
  */
 data class UserRepository(
     @BsonId
-    val id: Id<UserRepository> = newId(),
+    val _id: Id<UserRepository> = newId(),
     val email: String,
     val password: String?,
     val fullName: String = "",

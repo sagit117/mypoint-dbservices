@@ -67,6 +67,8 @@ fun Application.controllerUsersModule() {
 
                     val userRepositoryList = userService.findAll(userGetDTO)
 
+                    println(userRepositoryList)
+
                     call.respond(HttpStatusCode.OK, userRepositoryList)
                 }
             }

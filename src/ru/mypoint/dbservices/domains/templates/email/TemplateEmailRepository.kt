@@ -7,7 +7,7 @@ import ru.mypoint.dbservices.domains.users.UserRepository
 
 data class TemplateEmailRepository(
     @BsonId
-    val id: Id<UserRepository> = newId(),
+    val _id: Id<UserRepository> = newId(),
     val name: String,
     val template: String,
     val subject: String = "",
