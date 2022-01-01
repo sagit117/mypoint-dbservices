@@ -97,4 +97,9 @@ class UserService(private val collection: CoroutineCollection<UserRepository>) {
             )
             .toList()
     }
+
+    /** Получить количество пользователей всего */
+    suspend fun countAll(): Long {
+        return collection.countDocuments()
+    }
 }
