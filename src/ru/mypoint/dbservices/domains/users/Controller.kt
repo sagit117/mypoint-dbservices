@@ -70,11 +70,20 @@ fun Application.controllerUsersModule() {
                     call.respond(HttpStatusCode.OK, userRepositoryList)
                 }
 
-                /** Получить несколько пользователей */
+                /** Получить общее количество пользователей */
                 post("/count") {
                     val count = userService.countAll()
 
                     call.respond(HttpStatusCode.OK, mapOf("count" to count))
+                }
+
+                /** Получить несколько пользователей и общее количество */
+                post("/list") {
+                    val userGetDTO = call.receive<UsersGetDTO>()
+                    val count = userService.countAll()
+                    val userRepositoryList = userService.findAll(userGetDTO)
+
+                    call.respond(HttpStatusCode.OK, mapOf("users" to userRepositoryList, "count" to count))
                 }
             }
 
