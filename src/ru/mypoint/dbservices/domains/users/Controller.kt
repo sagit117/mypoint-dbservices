@@ -6,7 +6,8 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.bson.types.ObjectId
+import org.litote.kmongo.exclude
+import org.litote.kmongo.fields
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.*
 import ru.mypoint.dbservices.utils.sha256
@@ -68,9 +69,9 @@ fun Application.controllerUsersModule() {
 
                 /** Получить несколько пользователей */
                 post("/all") {
-                    val userGetDTO = call.receive<UsersGetDTO>()
+                    val listGetDTO = call.receive<ListGetDTO>()
 
-                    val userRepositoryList = userService.findAll(userGetDTO)
+                    val userRepositoryList = userService.findAll(listGetDTO, fields(exclude(UserRepository::password)))
 
                     call.respond(HttpStatusCode.OK, userRepositoryList)
                 }
@@ -84,9 +85,9 @@ fun Application.controllerUsersModule() {
 
                 /** Получить несколько пользователей и общее количество */
                 post("/list") {
-                    val userGetDTO = call.receive<UsersGetDTO>()
+                    val listGetDTO = call.receive<ListGetDTO>()
                     val count = userService.countAll()
-                    val userRepositoryList = userService.findAll(userGetDTO)
+                    val userRepositoryList = userService.findAll(listGetDTO, fields(exclude(UserRepository::password)))
 
                     call.respond(HttpStatusCode.OK, mapOf("users" to userRepositoryList, "count" to count))
                 }

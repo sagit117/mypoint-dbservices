@@ -1,6 +1,6 @@
 package ru.mypoint.dbservices.domains.users.dto
 
-data class UsersGetDTO(
+data class ListGetDTO(
     val limit: Int,
     val skip: Int
 )
