@@ -4,9 +4,11 @@ import com.mongodb.client.model.Field
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.result.InsertOneResult
 import com.mongodb.client.result.UpdateResult
+import org.bson.types.ObjectId
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineFindPublisher
+import org.litote.kmongo.id.toId
 import org.litote.kmongo.util.idValue
 import org.litote.kreflect.setPropertyValue
 import ru.mypoint.dbservices.domains.users.dto.UserChangeDataDTO
@@ -24,6 +26,10 @@ import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 class UserService(private val collection: CoroutineCollection<UserRepository>) {
     suspend fun findOneByEmail(email: String): UserRepository? {
         return collection.findOne(UserRepository::email eq email)
+    }
+
+    suspend fun findOneById(id: String): UserRepository? {
+        return collection.findOneById(ObjectId(id))
     }
 
     suspend fun insertOne(userCreateDTO: UserCreateDTO): InsertOneResult {

@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.bson.types.ObjectId
 import ru.mypoint.dbservices.connectors.DataBase
 import ru.mypoint.dbservices.domains.users.dto.*
 import ru.mypoint.dbservices.utils.sha256
@@ -52,7 +53,11 @@ fun Application.controllerUsersModule() {
                 post("/one") {
                     val userGetDTO = call.receive<UserGetDTO>()
 
-                    val userRepository = userService.findOneByEmail(userGetDTO.email)
+                    val userRepository = if (userGetDTO.email != null) {
+                        userService.findOneByEmail(userGetDTO.email)
+                    } else {
+                        userGetDTO.id?.let { id -> userService.findOneById(id) }
+                    }
 
                     if (userRepository != null) {
                         call.respond(HttpStatusCode.OK, userRepository.copy(password = ""))
